@@ -39,7 +39,7 @@ function SideMenu() {
                                 href="#"
                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                             >
-                                Wicked
+                                Song 1
                             </a>
                         </li>
 
@@ -48,7 +48,7 @@ function SideMenu() {
                                 href="#"
                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                             >
-                                Smoke
+                                Show 2 - Episode 1
                             </a>
                         </li>
 
@@ -57,7 +57,7 @@ function SideMenu() {
                                 href="#"
                                 className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                             >
-                                F1
+                                Video 3
                             </a>
                         </li>
                     </ul>
