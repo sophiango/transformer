@@ -1,0 +1,45 @@
+.fc-waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    background-color: #030000;
+    overflow: hidden;
+    padding: 10px;
+    border-radius: 0px;
+    cursor: pointer;
+}
+
+.fc-bar {
+    width: 2px;
+    margin: 0 1px;
+    background-color: #10b981;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.fc-bar::before,
+.fc-bar::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    background-color: inherit;
+}
+
+.fc-bar::before {
+    height: 100%;
+    top: 0;
+}
+
+.fc-bar::after {
+    height: 50%;
+    bottom: 0;
+}
+
+.fc-bar.hovered {
+    background-color: #f59e0b;
+}
+
+.fc-bar.marked {
+    background-color: #ef4444;
+}
