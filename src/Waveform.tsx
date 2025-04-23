@@ -17,12 +17,13 @@ const Waveform: React.FC<WaveformProps> = ({bars = 500}) => {
             } else {
                 newSet.add(index);
             }
+            console.log("new set index", newSet);
             return newSet;
         });
     };
 
     return (
-        <div className="fc-waveform w-full">
+        <div className="fc-waveform">
             {[...Array(bars)].map((_, i) => {
                 const height = Math.random() * 80 + 10;
                 const isMarked = marked.has(i);
