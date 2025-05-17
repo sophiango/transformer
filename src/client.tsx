@@ -5,7 +5,6 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 console.log("Supabase URL", supabaseUrl);
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
-console.log("Supabase", supabase);
 // API URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
