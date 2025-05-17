@@ -6,6 +6,10 @@
     --light-gray: #ddd;
     --danger-color: #f44336;
     --text-color: #212121;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
 }
 
 * {
@@ -259,13 +263,6 @@ body {
     .preset-issues {
         flex-direction: column;
     }
-}
-
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
 }
 
 .logo {

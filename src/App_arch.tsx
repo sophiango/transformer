@@ -1,7 +1,7 @@
-import './App.css'
+import './App_arch.css'
 import SideMenu from './SideMenu'
-import VideoView from './VideoView'
-import Waveform from "./Waveform.tsx";
+import VideoView from './components/VideoView.tsx'
+import Waveform from "./components/Waveform.tsx";
 
 function App_arch() {
     return (
