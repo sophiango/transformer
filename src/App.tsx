@@ -28,7 +28,6 @@ function App() {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        console.log("use effect")
         const fetchData = async () => {
             setLoading(true);
             setError('');
@@ -38,10 +37,8 @@ function App() {
                 console.log("fetchedVideos", fetchedVideos);
                 setVideoList(fetchedVideos);
             } catch (err: any) {
-                console.log("err ", err)
                 setError(err.message || 'An error occurred while fetching data.');
             } finally {
-                console.log("set loading to false")
                 setLoading(false);
             }
         };
@@ -180,7 +177,7 @@ function App() {
 
     if (loading) {
         return <p>Loading ... </p>;
-    } else if (error !== null) {
+    } else if (error) {
         return <p>Error fetching videos:</p>;
     } else {
         return (
