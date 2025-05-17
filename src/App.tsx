@@ -1,10 +1,10 @@
 // src/App.tsx
-import {useRef, useState, useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import VideoPlayer from './components/VideoPlayer';
 import WaveformVisualizer from './components/WaveformVisualizer';
 import QCControls from './components/QCControls';
 import './App.css';
-import { videoAPI } from './client';
+import {videoAPI} from './client';
 
 function App() {
     const [videoList, setVideoList] = useState<any[]>([]);
@@ -23,18 +23,20 @@ function App() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        console.log("use effect")
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 // Fetch videos
                 const fetchedVideos = await videoAPI.getAllVideos();
-                console.log(fetchedVideos);
+                console.log("fetchedVideos", fetchedVideos);
                 setVideoList(fetchedVideos);
-
             } catch (err: any) {
+                console.log("err ", err)
                 setError(err.message || 'An error occurred while fetching data.');
             } finally {
+                console.log("set loading to false")
                 setLoading(false);
             }
         };
@@ -42,26 +44,26 @@ function App() {
         fetchData();
     }, []); // The empty dependency array ensures this effect runs only once on mount
 
-    const handleVideoSelect = async (video: Video) => {
+    const handleVideoSelect = async (video) => {
         try {
-          setVideoUrl(video.url);
-    
-          // Reset state when loading a new video
-          setIsPlaying(false);
-          setCurrentTime(0);
-          setDuration(0);
-          setIssues([]);
-          setAudioData([]); // Clear previous audio data
-    
-          if (error) {
-            throw error;
-          }
+            setVideoUrl(video.url);
+
+            // Reset state when loading a new video
+            setIsPlaying(false);
+            setCurrentTime(0);
+            setDuration(0);
+            setIssues([]);
+            setAudioData([]); // Clear previous audio data
+            await extractAudioData(video.url)
+            if (error) {
+                throw error;
+            }
         } catch (error) {
-          console.error('Error getting video URL:', error);
-          setError('Failed to load the selected video. Please try again.');
+            console.error('Error getting video URL:', error);
+            setError('Failed to load the selected video. Please try again.');
         }
-      };
-    
+    };
+
 
     const extractAudioData = async (videoUrl: string) => {
         try {
@@ -198,7 +200,7 @@ function App() {
                                 onLoadedMetadata={handleLoadedMetadata}
                             />
                         </div>
-    
+
                         <div className="waveform-section">
                             <WaveformVisualizer
                                 audioData={audioData}
@@ -207,7 +209,7 @@ function App() {
                                 onSeek={handleSeek}
                             />
                         </div>
-    
+
                         <div className="qc-section">
                             <QCControls
                                 currentTime={currentTime}
