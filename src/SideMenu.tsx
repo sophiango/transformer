@@ -1,5 +1,3 @@
-import VideoList from "./components/VideoList.tsx";
-
 function SideMenu() {
     return (
         <div className="w-full">
@@ -8,7 +6,6 @@ function SideMenu() {
                     <span className="grid h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xl text-gray-600">
                       iSee
                     </span>
-                    <VideoList/>
                 </div>
             </div>
         </div>

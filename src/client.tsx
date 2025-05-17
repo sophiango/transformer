@@ -8,109 +8,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // API URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// Local storage key for video cache
-const VIDEO_CACHE_KEY = 'video_qc_cache';
-
-/**
- * Video cache management using IndexedDB
- */
-class VideoCache {
-    private dbName: string;
-    private storeName: string;
-    private db: IDBDatabase | null;
-
-    constructor() {
-        this.dbName = 'videoQCCache';
-        this.storeName = 'videos';
-        this.db = null;
-        this.initDB();
-    }
-
-    async initDB(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, 1);
-
-            request.onupgradeneeded = (event) => {
-                const db = event.target!.result; // Use non-null assertion here and below.  The event.target is defined.
-                if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName, {keyPath: 'id'});
-                }
-            };
-
-            request.onsuccess = (event) => {
-                this.db = event.target!.result;
-                resolve();
-            };
-
-            request.onerror = (event) => {
-                console.error('IndexedDB error:', event.target!.error);
-                reject(event.target!.error);
-            };
-        });
-    }
-
-    async saveVideo(videoId: string, blob: Blob, metadata: any): Promise<void> {
-        await this.ensureDBReady();
-
-        return new Promise<void>((resolve, reject) => {
-            const transaction = this.db!.transaction([this.storeName], 'readwrite'); // Non-null assertion, ensured by ensureDBReady
-            const store = transaction.objectStore(this.storeName);
-
-            const request = store.put({
-                id: videoId,
-                blob,
-                metadata,
-                cachedAt: new Date().toISOString()
-            });
-
-            request.onsuccess = () => resolve();
-            request.onerror = (event) => reject(event.target!.error);
-        });
-    }
-
-    async getVideo(videoId: string): Promise<any | null> {
-        await this.ensureDBReady();
-
-        return new Promise<any | null>((resolve, reject) => {
-            const transaction = this.db!.transaction([this.storeName], 'readonly');  // Non-null assertion
-            const store = transaction.objectStore(this.storeName);
-
-            const request = store.get(videoId);
-
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = (event) => reject(event.target!.error);
-        });
-    }
-
-    async hasVideo(videoId: string): Promise<boolean> {
-        const video = await this.getVideo(videoId);
-        return !!video;
-    }
-
-    async ensureDBReady(): Promise<void> {
-        if (!this.db) {
-            await this.initDB();
-        }
-    }
-
-    async clearCache(): Promise<void> {
-        await this.ensureDBReady();
-
-        return new Promise<void>((resolve, reject) => {
-            const transaction = this.db!.transaction([this.storeName], 'readwrite');  // Non-null assertion
-            const store = transaction.objectStore(this.storeName);
-
-            const request = store.clear();
-
-            request.onsuccess = () => resolve();
-            request.onerror = (event) => reject(event.target!.error);
-        });
-    }
-}
-
-// Initialize video cache
-const videoCache = new VideoCache();
-
 /**
  * Video API functions
  */
@@ -126,22 +23,9 @@ export const videoAPI = {
             throw error;
         }
     },
-
-    // Get a specific video with caching
+    
     async getVideo(videoId: string): Promise<any> {
         try {
-            // Check cache first
-            const cachedVideo = await videoCache.getVideo(videoId);
-            if (cachedVideo) {
-                console.log('Using cached video:', videoId);
-                return {
-                    ...cachedVideo.metadata,
-                    blob: cachedVideo.blob,
-                    url: URL.createObjectURL(cachedVideo.blob),
-                    fromCache: true
-                };
-            }
-
             // Fetch video metadata
             const response = await fetch(`${API_URL}/videos/${videoId}`);
             if (!response.ok) throw new Error('Failed to fetch video');
@@ -153,14 +37,10 @@ export const videoAPI = {
 
             const blob = await videoResponse.blob();
 
-            // Cache the video
-            await videoCache.saveVideo(videoId, blob, videoData);
-
             return {
                 ...videoData,
                 blob,
-                url: URL.createObjectURL(blob),
-                fromCache: false
+                url: URL.createObjectURL(blob)
             };
         } catch (error: any) {
             console.error(`Error fetching video ${videoId}:`, error);

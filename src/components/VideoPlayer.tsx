@@ -2,7 +2,7 @@
 import {RefObject} from 'react';
 
 interface VideoPlayerProps {
-    videoRef: RefObject<HTMLVideoElement>;
+    videoRef: RefObject<HTMLVideoElement | null>;
     videoUrl: string;
     isPlaying: boolean;
     currentTime: number;

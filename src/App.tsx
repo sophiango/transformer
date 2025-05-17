@@ -6,6 +6,12 @@ import QCControls from './components/QCControls';
 import './App.css';
 import {videoAPI} from './client';
 
+interface VideoProps {
+    id: string;
+    title: string;
+    url: string;
+}
+
 function App() {
     const [videoList, setVideoList] = useState<any[]>([]);
     const [error, setError] = useState<string>('');
@@ -20,13 +26,12 @@ function App() {
     const [issues, setIssues] = useState<string[]>([]);
 
     const videoRef = useRef<HTMLVideoElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         console.log("use effect")
         const fetchData = async () => {
             setLoading(true);
-            setError(null);
+            setError('');
             try {
                 // Fetch videos
                 const fetchedVideos = await videoAPI.getAllVideos();
@@ -44,7 +49,7 @@ function App() {
         fetchData();
     }, []); // The empty dependency array ensures this effect runs only once on mount
 
-    const handleVideoSelect = async (video) => {
+    const handleVideoSelect = async (video: VideoProps) => {
         try {
             setVideoUrl(video.url);
 
@@ -54,6 +59,12 @@ function App() {
             setDuration(0);
             setIssues([]);
             setAudioData([]); // Clear previous audio data
+
+            // Make sure the video element reloads with the new source
+            if (videoRef.current) {
+                videoRef.current.load();
+            }
+            
             await extractAudioData(video.url)
             if (error) {
                 throw error;
@@ -110,11 +121,11 @@ function App() {
     };
 
     // Mock function to generate waveform data
-    const generateMockAudioData = () => {
-        const sampleCount = 1000;
-        const mockData = Array.from({length: sampleCount}, () => Math.random() * 0.8);
-        setAudioData(mockData);
-    };
+    // const generateMockAudioData = () => {
+    //     const sampleCount = 1000;
+    //     const mockData = Array.from({length: sampleCount}, () => Math.random() * 0.8);
+    //     setAudioData(mockData);
+    // };
 
     const togglePlay = () => {
         if (videoRef.current) {
@@ -163,9 +174,9 @@ function App() {
         }
     };
 
-    const triggerFileInput = () => {
-        fileInputRef.current?.click();
-    };
+    // const triggerFileInput = () => {
+    //     fileInputRef.current?.click();
+    // };
 
     if (loading) {
         return <p>Loading ... </p>;
